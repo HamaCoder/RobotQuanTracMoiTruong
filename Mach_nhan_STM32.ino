@@ -137,22 +137,21 @@ struct Data_Robot {
 };
 Data_Robot robot;
 
+
  
-String gpslat[24] = {
-"10.0351812","10.0353636","10.0355570","10.0355823",
-"10.0355999","10.0354983","10.0353385","10.0351660",
-"10.0349687","10.0350796","10.0352268","10.0353768",
-"10.0355265","10.0355654","10.0355348","10.0354488",
-"10.0353322","10.0353544","10.0353294","10.0352322",
-"10.0351961","10.0351907","10.0350796","10.0349879"
+float gpslat[24] = {
+10.0351414,10.0352652,10.0353910,10.0355146,10.0356135,
+10.0356674,10.0356156,10.0355415,10.0354516,10.0354291,
+10.0353550,10.0352493,10.0351954,10.0351549,10.0351459,
+10.0351481,10.0350784,10.0350266,10.0349748,10.0350176,
+10.0350829,10.0351796
 };
-String gpslng[24] = {
-"105.7679953","105.7681394","105.7681465","105.7679307",
-"105.7677711","105.7676387","105.7674327","105.7671981",
-"105.7670218","105.7670503","105.7670335","105.7669968",
-"105.7669093","105.7667373","105.7666104","105.7666217",
-"105.7666358","105.7665146","105.7663792","105.7663736",
-"105.7665399","105.7667203","105.7670503","105.7671264"
+float gpslng[24] = {
+105.7669564,105.7669588,105.7669678,105.7669403,105.7668764,
+105.7667736,105.7666618,105.7666230,105.7666412,105.7665294,
+105.7664746,105.7664974,105.7665796,105.7666868,105.7668011,
+105.7669313,105.7669061,105.7668239,105.7667440,105.7668354,
+105.7669267,105.7669382
 };
 
 
@@ -187,10 +186,10 @@ float RS;
 float ratio;
 float sensor_MQ9;
 float LPG, CH4, CO, H2;
-float begin_xmap =  10.0351812;
-float begin_ymap = 105.7679953;
-String latMap;
-String lngMap;
+float begin_xmap = 10.03482303;
+float begin_ymap = 105.7677079;
+float latMap;
+float lngMap;
 int readlatlng   = 0;
 int ketNoi       = 0;
 
@@ -624,8 +623,6 @@ void loop() {
     robot.setCO  = CO;
     robot.setH2  = H2;
     
-    khoangCach = khoangcach(begin_xmap, begin_ymap, latMap.toFloat(), lngMap.toFloat());
-
     if (readlatlng >= 24){
       readlatlng = 0;
       khoangCach = 0;
@@ -633,6 +630,9 @@ void loop() {
     latMap = gpslat[readlatlng];
     lngMap = gpslng[readlatlng];
     readlatlng++;
+
+    khoangCach = khoangcach(begin_xmap, begin_ymap, latMap, lngMap);
+
   } else {
     robot.setLPG = LPG;
     robot.setCH4 = CH4;
@@ -658,15 +658,15 @@ void loop() {
  */
   delay(10);
   robot.id     = 7;
-  robot.setLPG = latMap.toFloat();
-  robot.setCH4 = lngMap.toFloat();
+  robot.setLPG = latMap;
+  robot.setCH4 = lngMap;
   radio.write(&robot, sizeof(Data_Robot));
 
 
   Serial.print("-Ket noi-"+String(robot.setKetNoi));
   Serial.print("-Trang thai-"+String(trangThai)+"-");
   Serial.println(String(LPG)+"-"+String(CH4)+"-"+String(CO)+"-"+String(H2)+"-"+
-  String(latMap.toFloat(),7)+"-"+String(lngMap.toFloat(),7)+"-"+String(khoangCach)+"-"+String(sizeof(robot)));
+  String(latMap,7)+"-"+String(lngMap,7)+"-"+String(khoangCach)+"-"+String(sizeof(robot)));
 
 }
 
